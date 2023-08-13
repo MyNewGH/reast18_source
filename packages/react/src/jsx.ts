@@ -3,7 +3,7 @@ import {
 	Type,
 	Key,
 	Props,
-	ReactElement,
+	ReactElementType,
 	Ref,
 	ElementType
 } from 'shared/ReactTypes';
@@ -12,7 +12,7 @@ const ReactElement = function (
 	key: Key,
 	ref: Ref,
 	props: Props
-): ReactElement {
+): ReactElementType {
 	const element = {
 		$$typeof: REACT_ELEMENT_TYPE,
 		key,
@@ -52,6 +52,31 @@ export const jsx = (type: ElementType, config: any, ...maybeChildren: any) => {
 			props.children = maybeChildren[0];
 		} else {
 			props.children = maybeChildren;
+		}
+	}
+	return ReactElement(type, key, ref, props);
+};
+
+export const jsxDev = (type: ElementType, config: any) => {
+	let key: Key = null;
+	const props: Props = {};
+	let ref: Ref = null;
+	for (const configKey in config) {
+		const val = config[configKey];
+		if (configKey === 'key') {
+			if (val !== undefined) {
+				key = '' + val;
+			}
+			continue;
+		}
+		if (configKey === 'ref') {
+			if (val !== undefined) {
+				ref = val;
+			}
+			continue;
+		}
+		if ({}.hasOwnProperty.call(config, configKey)) {
+			props[configKey] = val;
 		}
 	}
 	return ReactElement(type, key, ref, props);
